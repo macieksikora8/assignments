@@ -29,7 +29,10 @@ def poland_cases_by_date(day: int, month: int, year: int = 2020) -> int:
     """
     
     # Your code goes here (remove pass)
-    pass
+    def poland_cases_by_date(day: int, month: int, year: int = 2020):
+      date = "/".join([str(month),str(day),str(year)[2:4]])
+      a = confirmed_cases.loc[confirmed_cases['Country/Region'] == 'Poland', date]
+      return int(a)
 
 
 def top5_countries_by_date(day: int, month: int, year: int = 2020) -> List[str]:
@@ -49,7 +52,11 @@ def top5_countries_by_date(day: int, month: int, year: int = 2020) -> List[str]:
     """
 
     # Your code goes here (remove pass)
-    pass
+    def top5_countries_by_date(day: int, month: int, year: int = 2020):
+      date = "/".join([str(month),str(day),str(year)[2:4]])
+      df = confirmed_cases[['Country/Region', date]].groupby('Country/Region').sum().sort_values(by=date).tail(5).reset_index()
+      c =list(df['Country/Region'])
+      return c[::-1]
 
 # Function name is wrong, read the pydoc
 def no_new_cases_count(day: int, month: int, year: int = 2020) -> int:
@@ -70,4 +77,31 @@ def no_new_cases_count(day: int, month: int, year: int = 2020) -> int:
     """
     
     # Your code goes here (remove pass)
-    pass
+    def no_new_cases_count(day: int, month: int, year: int = 2020):
+      import datetime
+      d1 =datetime.date(year,month,day)
+      delta = datetime.timedelta(days=1)
+      d2 = d1 - delta
+
+
+      a = list(d1.strftime("%m/%d/%y"))
+      b = list(d2.strftime("%m/%d/%y"))
+
+      if a[3] == '0':
+          del a[3]
+     
+      if b[3] == '0':
+          del b[3]
+            
+      if a[0] == '0':
+          del a[0]
+                
+      if b[0] == '0':
+          del b[0]
+ 
+      a = "".join(a)
+      b = "".join(b)    
+
+      df = confirmed_cases[['Country/Region', a, b]].reset_index()
+      roznica = df[a]-df[b]
+      return roznica.loc[(roznica>0)].count()
